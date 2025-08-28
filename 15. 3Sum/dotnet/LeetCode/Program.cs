@@ -3,16 +3,27 @@
 using System.Text.Json;
 using LeetCode;
 
-int a = 1 - 1;
-var i = 3 % a;
 
 var start = DateTime.Now;
 var json = File.ReadAllText("testdata.json");
 var array = JsonSerializer.Deserialize<int[]>(json);
-var result = new Solution().ThreeSum(array);
-foreach (var item in result)
-{
-    Console.WriteLine($"[{string.Join(", ", item)}]");
-}
+var result = new Solution().ThreeSum(array); //[-2,0,1,1,2]);
 
-Console.WriteLine(DateTime.Now - start);
+var d1 = (DateTime.Now - start);
+start = DateTime.Now;
+var result2 = new Solution().ThreeSum2(array);
+var d2 = (DateTime.Now - start);
+
+// foreach (var item in result)
+// {
+//     Console.WriteLine($"[{string.Join(", ", item)}]");
+// }
+
+
+Console.WriteLine($"duration 1: {d1}    duration 2: {d2}");
+
+var x = new List<int>(){1,2,3}.ToArray();
+
+Console.WriteLine(x == new int[]{1,2,3});
+
+

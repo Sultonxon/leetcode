@@ -2,77 +2,61 @@ namespace LeetCode;
 
 public class Solution
 {
+    struct Triplet : IEquatable<Triplet>
+    {
+        public int A;
+        public int B;
+        public int C;
+
+        public Triplet(int a, int b, int c)
+        {
+            A = a;
+            B = b;
+            C = c;
+        }
+
+        public bool Equals(Triplet other)
+        {
+            return A == other.A && B == other.B && C == other.C;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Triplet other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(A, B, C);
+        }
+    }
+    
     public IList<IList<int>> ThreeSum(int[] nums)
     {
+        var start = DateTime.Now;
         Array.Sort(nums);
-        var result = new List<IList<int>>();
+        var result = new HashSet<Triplet>();
 
-        int i=0, j=1, k = nums.Length-1;
-        int lastI = int.MinValue;
-        var lastJ = int.MinValue;
-        var lastK = int.MinValue;
-
-        while (i < nums.Length - 1 && j < nums.Length && k >= 0)
+        int counter = 0;
+        
+        int i = 0;
+        int j = 1;
+        int k = nums.Length - 1;
+        while (i < nums.Length)
         {
-            if (k == j)
+            if(i == nums.Length - 2) break;
+            if (nums[i] > 0)
             {
-                k++;
-                continue;
-            }
-
-            if (k == i)
-            {
-                i++;
-                k = nums.Length - 1;
-                j = i + 1;
-                if(i == nums.Length - 1) break;
-                continue;
+                break;
             }
             
             var sum = nums[i] + nums[j] + nums[k];
-//
-//             Console.WriteLine(
-//                 $"(i, j, k): ({i}, {j}, {k}),  nums[i]: {nums[i]}, nums[j]: {nums[j]}, nums[k]: {nums[k]},  sum: {sum}, result count: {result.Count}");
-// //                                  $"lastI: {lastI}, lastJ: {lastJ}, lastK: {lastK},  {lastI == nums[i] && lastJ == nums[j] && lastK == nums[k]}, ");
-//             
-
-            
             if (sum == 0)
             {
+                var list = new Triplet(nums[i], nums[j], nums[k] );
+                result.Add(list);
 
-                if (lastI == nums[i] && lastJ == nums[j] && lastK == nums[k])
-                {
-                    if (j == k - 1)
-                    {
-                        i++;
-                        j = i + 1;
-                    }
-                    else
-                    {
-                        j++;
-                    }
-                }
-                else
-                {
-                    result.Add(new List<int> { nums[i], nums[j], nums[k] });
-                }
-                lastI = nums[i];
-                lastJ = nums[j];
-                lastK = nums[k];
-            }
-            else if (sum > 0)
-            {
-                lastI = nums[i];
-                lastJ = nums[j];
-                lastK = nums[k];
-                k--;
-            }
-            else if (sum < 0)
-            {
-                lastI = nums[i];
-                lastJ = nums[j];
-                lastK = nums[k];
-                if (j == nums.Length - 1)
+                if (j + 1 == k && nums[i] + nums[j] <= 0 && nums[k] >= 0)
                 {
                     i++;
                     j = i + 1;
@@ -81,11 +65,23 @@ public class Solution
                 else
                 {
                     j++;
+                    k--;
                 }
             }
+            else if (sum > 0) k--;
+            else j++;
+            
+            if(i == nums.Length - 2) break;
+            if (k == j)
+            {
+                i++;
+                j = i + 1;
+                k=nums.Length - 1;
+            }
         }
-
-        return result;
+        
+        var r = result.Select(x => (IList<int>)new List<int>(){x.A, x.B, x.C}).ToList();
+        return r;
     }
     
     public IList<IList<int>> ThreeSum2(int[] nums)
